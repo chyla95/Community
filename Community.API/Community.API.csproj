@@ -24,8 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Customers\" />
-    <Folder Include="Controllers\Staff\" />
     <Folder Include="Dtos\Customers\" />
   </ItemGroup>
 
