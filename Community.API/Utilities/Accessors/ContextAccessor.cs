@@ -1,4 +1,5 @@
-﻿using Community.Domain.Models;
+﻿using Community.API.Utilities.Exceptions;
+using Community.Domain.Models;
 
 namespace Community.API.Utilities.Accessors
 {
@@ -18,6 +19,22 @@ namespace Community.API.Utilities.Accessors
 
             return user;
         }
+        public bool IsUserAuthenticated<T>() where T : User
+        {
+            T? user;
+            try
+            {
+                user = (T?)GetContextFeature<User>();
+            }
+            catch
+            {
+                return false;
+            }
+
+            if (user == null) return false;
+            return true;
+        }
+
         private T? GetContextFeature<T>() where T : class
         {
             HttpContext? httpContext = _httpContextAccessor.HttpContext;
