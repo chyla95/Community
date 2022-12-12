@@ -7,11 +7,11 @@ namespace Community.Infrastructure.DataAccess
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
+        public DbSet<User> Users { get; set; }
+        public DbSet<Customer> Customers { get; set; }
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Role> Roles { get; set; }
-        public DbSet<User> Users { get; set; }
 
-        public DbSet<Customer> Customers { get; set; }
     }
 }
 // dotnet ef migrations add AddStaffAndRoles --project .\Community.Infrastructure\ -s .\Community.API\
