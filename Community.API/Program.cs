@@ -2,8 +2,6 @@
 using Community.API.Middlewares;
 using Community.API.Utilities;
 using Community.API.Utilities.Accessors;
-using Community.API.Utilities.Wrappers;
-using Community.Domain.Models;
 using Community.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -16,15 +14,15 @@ namespace Community.API
     {
         public static void Main(string[] args)
         {
-            // Add services to the container.
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+            // Get application settings
             string? jwtSecretKey = builder.Configuration.GetSection(Configuration.JWT_SECRET_KEY).Value;
             if (jwtSecretKey == null) throw new NullReferenceException(nameof(jwtSecretKey));
-
             string? dbConnectionString = builder.Configuration.GetSection(Configuration.DB_CONNECTION_STRING_KEY).Value;
             if (dbConnectionString == null) throw new NullReferenceException(nameof(dbConnectionString));
 
+            // Add services to the container.
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -51,10 +49,8 @@ namespace Community.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddHttpContextAccessor();
 
-            builder.Services.AddScoped<IHttpContextWrapper, HttpContextWrapper>();
-            builder.Services.AddScoped<ICurrentUser<Staff>, CurrentUser<Staff>>();
-            builder.Services.AddScoped<ICurrentUser<Customer>, CurrentUser<Customer>>();
-            builder.Services.AddScoped<IAppSettings, AppSettings>();
+            builder.Services.AddScoped<IContextAccessor, ContextAccessor>();
+            builder.Services.AddScoped<ISettingsAccessor, SettingsAccessor>();
 
             builder.Services.AddInfrastructureServices(dbConnectionString);
             builder.Services.AddAutoMapper(typeof(Program));

@@ -1,6 +1,6 @@
 ﻿namespace Community.API.Utilities.Accessors
 {
-    public interface IAppSettings
+    public interface ISettingsAccessor
     {
         string GetValue(string key);
     }

@@ -10,9 +10,9 @@ namespace Community.API.Controllers
     [Authorize]
     public class TestController : ControllerBase
     {
-        private readonly ICurrentUser<Staff> _currentUser;
+        private readonly IContextAccessor _currentUser;
 
-        public TestController(ICurrentUser<Staff> currentUser)
+        public TestController(IContextAccessor currentUser)
         {
             _currentUser = currentUser;
         }
@@ -20,7 +20,7 @@ namespace Community.API.Controllers
         [HttpGet]
         public ActionResult Test()
         {
-            return Ok(_currentUser.GetUser());
+            return Ok(_currentUser.GetUser<Staff>());
         }
     }
 }

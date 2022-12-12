@@ -16,9 +16,9 @@ namespace Community.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IUserService<Staff> _userService;
-        private readonly IAppSettings _appSettings;
+        private readonly ISettingsAccessor _appSettings;
 
-        public StaffAuthorizationController(IMapper mapper, IUserService<Staff> userService, IAppSettings appSettings)
+        public StaffAuthorizationController(IMapper mapper, IUserService<Staff> userService, ISettingsAccessor appSettings)
         {
             _mapper = mapper;
             _userService = userService;

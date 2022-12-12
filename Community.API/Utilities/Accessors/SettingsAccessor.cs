@@ -1,10 +1,10 @@
 ﻿namespace Community.API.Utilities.Accessors
 {
-    public class AppSettings : IAppSettings
+    public class SettingsAccessor : ISettingsAccessor
     {
         private readonly IConfiguration _configuration;
 
-        public AppSettings(IConfiguration configuration)
+        public SettingsAccessor(IConfiguration configuration)
         {
             _configuration = configuration;
         }
@@ -14,9 +14,9 @@
             if (string.IsNullOrEmpty(key)) throw new NullReferenceException(nameof(key));
 
             string? value = _configuration.GetSection(key).Value;
-            if (string.IsNullOrEmpty(key)) throw new NullReferenceException(nameof(value));
+            if (string.IsNullOrEmpty(value)) throw new NullReferenceException(nameof(value));
 
-            return value!;
+            return value;
         }
     }
 }
