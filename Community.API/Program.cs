@@ -1,12 +1,10 @@
 
+using Community.API.Filters;
 using Community.API.Middlewares;
 using Community.API.Utilities;
 using Community.API.Utilities.Accessors;
 using Community.Infrastructure;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Filters;
 
 namespace Community.API
 {
@@ -23,47 +21,50 @@ namespace Community.API
             if (dbConnectionString == null) throw new NullReferenceException(nameof(dbConnectionString));
 
             // Add services to the container.
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtSecretKey)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
-            });
             builder.Services.AddSwaggerGen(configuration =>
             {
-                configuration.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                configuration.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
+                    Name = "Authorization",
+                    Scheme = "Bearer",
                     Description = "Standard Authorization header using the bearer scheme, e.g. \"bearer {token}\"",
                     In = ParameterLocation.Header,
-                    Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey
                 });
-                configuration.OperationFilter<SecurityRequirementsOperationFilter>();
+                configuration.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                        },
+                        new List<string>()
+                    }
+                });
             });
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddHttpContextAccessor();
 
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<IContextAccessor, ContextAccessor>();
             builder.Services.AddScoped<ISettingsAccessor, SettingsAccessor>();
 
             builder.Services.AddInfrastructureServices(dbConnectionString);
             builder.Services.AddAutoMapper(typeof(Program));
+            builder.Services.AddScoped<ProtectResource>();
 
             // Configure the HTTP request pipeline.
             WebApplication app = builder.Build();
             if (app.Environment.IsDevelopment()) app.UseSwagger();
             if (app.Environment.IsDevelopment()) app.UseSwaggerUI();
-            app.SetupExceptionHandler();
             app.UseHttpsRedirection();
-            app.UseAuthentication();
-            app.UseUserHandler();
-            app.UseAuthorization();
+            app.SetupExceptionHandler();
+            app.SetupAuthenticationHandler();
             app.MapControllers();
             app.Run();
         }

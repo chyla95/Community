@@ -1,4 +1,5 @@
-﻿using Community.API.Utilities.Accessors;
+﻿using Community.API.Filters;
+using Community.API.Utilities.Accessors;
 using Community.Domain.Models;
 using Community.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,6 @@ namespace Community.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class TestController : ControllerBase
     {
         private readonly IUserService<Staff> _userService;
@@ -27,6 +27,7 @@ namespace Community.API.Controllers
         }
         [AllowAnonymous]
         [HttpGet("2")]
+        [Authorization(Name = "Test")]
         public async Task<ActionResult> Test2()
         {
             return Ok(await _userService.GetManyAsync());

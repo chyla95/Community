@@ -35,7 +35,6 @@ namespace Community.Domain.Models
         {
             List<Claim> jwtTokenClaims = new()
             {
-                new Claim(ClaimTypes.NameIdentifier, Id.ToString()),
                 new Claim("userId", Id.ToString()),
             };
 
