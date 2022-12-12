@@ -1,5 +1,6 @@
 ﻿using Community.API.Utilities.Accessors;
 using Community.Domain.Models;
+using Community.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,17 +11,25 @@ namespace Community.API.Controllers
     [Authorize]
     public class TestController : ControllerBase
     {
+        private readonly IUserService<Staff> _userService;
         private readonly IContextAccessor _currentUser;
 
-        public TestController(IContextAccessor currentUser)
+        public TestController(IUserService<Staff> userService,IContextAccessor currentUser)
         {
+            _userService = userService;
             _currentUser = currentUser;
         }
 
-        [HttpGet]
-        public ActionResult Test()
+        [HttpGet("1")]
+        public ActionResult Test1()
         {
             return Ok(_currentUser.GetUser<Staff>());
+        }
+        [AllowAnonymous]
+        [HttpGet("2")]
+        public async Task<ActionResult> Test2()
+        {
+            return Ok(await _userService.GetManyAsync());
         }
     }
 }

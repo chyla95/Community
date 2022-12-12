@@ -32,7 +32,7 @@ namespace Community.API.Controllers
             if (isEmailTaken) throw new HttpBadRequestException("Email adress is taken!");
 
             Staff staff = _mapper.Map<Staff>(staffSignUpRequestDto);
-            await _userService.AddOneAsync(staff);
+            await _userService.AddAsync(staff);
 
             StaffAuthorizationResponseDto response = _mapper.Map<StaffAuthorizationResponseDto>(staff);
             string JwtTokenSecret = _appSettings.GetValue(Configuration.JWT_SECRET_KEY);
@@ -44,7 +44,7 @@ namespace Community.API.Controllers
         [HttpPost("SignIn")]
         public async Task<ActionResult<StaffAuthorizationResponseDto>> SignIn(StaffSignInRequestDto staffSignInRequestDto)
         {
-            Staff? staff = await _userService.GetOneAsync(staffSignInRequestDto.Email);
+            Staff? staff = await _userService.GetAsync(staffSignInRequestDto.Email);
             if (staff == null) throw new HttpBadRequestException("Invalid credentials!");
             if (!staff.ComparePassword(staffSignInRequestDto.Password)) throw new HttpBadRequestException("Invalid credentials!");
 

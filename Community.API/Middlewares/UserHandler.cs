@@ -20,8 +20,8 @@ namespace Community.API.Middlewares
             if (!string.IsNullOrEmpty(userIdClaimValue))
             {
                 int userId = int.Parse(userIdClaimValue);
-                User? user = await userService.GetOneAsync(userId);
-                if (user == null) throw new Exception($"User with ID of {userId} does not exist!");
+                User? user = await userService.GetAsync(userId);
+                if (user == null) throw new NullReferenceException(nameof(user));
 
                 httpContext.Features.Set(user);
             }

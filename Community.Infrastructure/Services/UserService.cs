@@ -4,61 +4,36 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Community.Infrastructure.Services
 {
-    internal class UserService<T> : IUserService<T> where T : User
+    internal class UserService<T> : Service<T>, IUserService<T> where T : User
     {
-        private readonly DataContext _dataContext;
-        private readonly DbSet<T> _dbSet;
+        public UserService(DataContext dataContext) : base(dataContext) { }
 
-        public UserService(DataContext dataContext)
+        public async Task<T?> GetAsync(string email)
         {
-            _dataContext = dataContext;
-            _dbSet = dataContext.Set<T>();
-        }
+            IQueryable<T> query = CreateQuery(_dbSet);
 
-        public async Task<IEnumerable<T>> GetManyAsync()
-        {
-            IQueryable<T> query = _dbSet.Select(e => e);
-
-            IEnumerable<T> users = await query.ToListAsync();
-            return users;
-        }
-        public async Task<T?> GetOneAsync(int id)
-        {
-            IQueryable<T> query = _dbSet.Where(e => e.Id == id);
-
-            T? user = await query.SingleOrDefaultAsync();
+            T? user = await query.SingleOrDefaultAsync(e => e.Email == email);
             return user;
-        }
-        public async Task<T?> GetOneAsync(string email)
-        {
-            IQueryable<T> query = _dbSet.Where(e => e.Email == email);
-
-            T? user = await query.SingleOrDefaultAsync();
-            return user;
-        }
-        public async Task AddOneAsync(T user)
-        {
-            _dbSet.Add(user);
-            await _dataContext.SaveChangesAsync();
-        }
-        public async Task UpdateOneAsync(T user)
-        {
-            _dbSet.Update(user);
-            await _dataContext.SaveChangesAsync();
-        }
-        public async Task RemoveOneAsync(T user)
-        {
-            _dbSet.Remove(user);
-            await _dataContext.SaveChangesAsync();
         }
         public async Task<bool> IsEmailTaken(string email, int? userId = null)
         {
+            IQueryable<T> query = CreateQuery(_dbSet);
+
             T? user;
-            if (userId != null) user = await _dbSet.SingleOrDefaultAsync(u => (u.Email == email) && (u.Id != userId));
-            else user = await _dbSet.SingleOrDefaultAsync(u => u.Email == email);
+            if (userId != null) user = await query.SingleOrDefaultAsync(u => (u.Email == email) && (u.Id != userId));
+            else user = await query.SingleOrDefaultAsync(u => u.Email == email);
 
             if (user != null) return true;
             return false;
+        }
+
+        protected override IQueryable<T> CreateQuery(DbSet<T> dbSet)
+        {
+            IQueryable<T> query = base.CreateQuery(dbSet)
+            // Includes for Staff
+                .Include("Roles");
+
+            return query;
         }
     }
 }

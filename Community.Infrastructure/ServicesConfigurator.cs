@@ -10,10 +10,10 @@ namespace Community.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, string databaseConnectionString)
         {
-            // Add Database
+            // Database
             services.AddDbContext<DataContext>(options => options.UseSqlServer(databaseConnectionString));
 
-            // AddOneAsync Services
+            // Services
             services.AddScoped<IUserService<User>, UserService<User>>();
             services.AddScoped<IUserService<Staff>, UserService<Staff>>();
             services.AddScoped<IUserService<Customer>, UserService<Customer>>();
