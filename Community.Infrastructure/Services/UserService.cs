@@ -31,9 +31,7 @@ namespace Community.Infrastructure.Services
         {
             IQueryable<T> query = base.CreateQuery(dbSet)
             // Includes for Employee
-                .Include("Roles")
-                .Include("Roles.Permissions");
-
+                .Include("Roles");
 
             return query;
         }

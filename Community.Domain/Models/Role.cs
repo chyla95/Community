@@ -9,10 +9,10 @@ namespace Community.Domain.Models
         [Required]
         [MinLength(3), MaxLength(30)]
         public string Name { get; set; }
-        [Required]
         public bool IsAdministrator { get; set; }
-
-        public IEnumerable<Permission> Permissions { get; set; }
+        public bool CanManageRoles { get; set; }
+        public bool CanManageEmployees { get; set; }
+        public bool CanManageCustomers { get; set; }
     }
 #pragma warning restore CS8618
 }

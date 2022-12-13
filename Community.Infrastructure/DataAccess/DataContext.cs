@@ -10,10 +10,10 @@ namespace Community.Infrastructure.DataAccess
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Role>()
-                .HasMany(p => p.Permissions)
-                .WithOne()
-                .OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.Entity<Role>()
+            //    .HasMany(p => p.Permissions)
+            //    .WithOne()
+            //    .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Employee>()
                 .HasMany(p => p.Roles)
@@ -25,7 +25,6 @@ namespace Community.Infrastructure.DataAccess
         public DbSet<Employee> Employees { get; set; }
 
         public DbSet<Role> Roles { get; set; }
-        public DbSet<Permission> Permissions { get; set; }
     }
 }
 // dotnet ef migrations add MigrationName --project .\Community.Infrastructure\ -s .\Community.API\

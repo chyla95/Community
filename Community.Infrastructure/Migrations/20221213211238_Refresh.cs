@@ -17,7 +17,10 @@ namespace Community.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    IsAdministrator = table.Column<bool>(type: "bit", nullable: false)
+                    IsAdministrator = table.Column<bool>(type: "bit", nullable: false),
+                    CanManageRoles = table.Column<bool>(type: "bit", nullable: false),
+                    CanManageEmployees = table.Column<bool>(type: "bit", nullable: false),
+                    CanManageCustomers = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -37,27 +40,6 @@ namespace Community.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Permissions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Resource = table.Column<int>(type: "int", nullable: false),
-                    Operation = table.Column<int>(type: "int", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Permissions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Permissions_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -88,11 +70,6 @@ namespace Community.Infrastructure.Migrations
                 name: "IX_EmployeeRole_RolesId",
                 table: "EmployeeRole",
                 column: "RolesId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Permissions_RoleId",
-                table: "Permissions",
-                column: "RoleId");
         }
 
         /// <inheritdoc />
@@ -102,13 +79,10 @@ namespace Community.Infrastructure.Migrations
                 name: "EmployeeRole");
 
             migrationBuilder.DropTable(
-                name: "Permissions");
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.DropTable(
-                name: "Roles");
         }
     }
 }
