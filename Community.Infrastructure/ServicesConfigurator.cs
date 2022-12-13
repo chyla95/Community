@@ -1,4 +1,5 @@
 ﻿using Community.Domain.Models;
+using Community.Domain.Models.Abstract;
 using Community.Infrastructure.DataAccess;
 using Community.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ namespace Community.Infrastructure
 
             // Services
             services.AddScoped<IUserService<User>, UserService<User>>();
-            services.AddScoped<IUserService<Staff>, UserService<Staff>>();
+            services.AddScoped<IUserService<Employee>, UserService<Employee>>();
             services.AddScoped<IUserService<Customer>, UserService<Customer>>();
 
             return services;

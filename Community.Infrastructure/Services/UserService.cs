@@ -1,4 +1,4 @@
-﻿using Community.Domain.Models;
+﻿using Community.Domain.Models.Abstract;
 using Community.Infrastructure.DataAccess;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,7 +30,7 @@ namespace Community.Infrastructure.Services
         protected override IQueryable<T> CreateQuery(DbSet<T> dbSet)
         {
             IQueryable<T> query = base.CreateQuery(dbSet)
-            // Includes for Staff
+            // Includes for Employee
                 .Include("Roles");
 
             return query;

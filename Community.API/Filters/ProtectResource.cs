@@ -1,6 +1,7 @@
 ﻿using Community.API.Utilities.Accessors;
 using Community.API.Utilities.Exceptions;
 using Community.Domain.Models;
+using Community.Domain.Models.Abstract;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Community.API.Filters
@@ -20,7 +21,7 @@ namespace Community.API.Filters
         {
             if (!_contextAccessor.IsUserAuthenticated<User>()) throw new HttpUnauthorizedException();
 
-            Staff user = _contextAccessor.GetUser<Staff>();
+            Employee user = _contextAccessor.GetUser<Employee>();
 
             await next();
         }

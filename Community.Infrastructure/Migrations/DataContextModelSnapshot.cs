@@ -22,6 +22,37 @@ namespace Community.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Community.Domain.Models.Abstract.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("User");
+
+                    b.UseTphMappingStrategy();
+                });
+
             modelBuilder.Entity("Community.Domain.Models.Permission", b =>
                 {
                     b.Property<int>("Id")
@@ -67,64 +98,33 @@ namespace Community.Infrastructure.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("Community.Domain.Models.User", b =>
+            modelBuilder.Entity("EmployeeRole", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("User");
-
-                    b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("RoleStaff", b =>
-                {
                     b.Property<int>("RolesId")
                         .HasColumnType("int");
 
-                    b.Property<int>("StaffId")
-                        .HasColumnType("int");
+                    b.HasKey("EmployeeId", "RolesId");
 
-                    b.HasKey("RolesId", "StaffId");
+                    b.HasIndex("RolesId");
 
-                    b.HasIndex("StaffId");
-
-                    b.ToTable("RoleStaff");
+                    b.ToTable("EmployeeRole");
                 });
 
             modelBuilder.Entity("Community.Domain.Models.Customer", b =>
                 {
-                    b.HasBaseType("Community.Domain.Models.User");
+                    b.HasBaseType("Community.Domain.Models.Abstract.User");
 
                     b.HasDiscriminator().HasValue("Customer");
                 });
 
-            modelBuilder.Entity("Community.Domain.Models.Staff", b =>
+            modelBuilder.Entity("Community.Domain.Models.Employee", b =>
                 {
-                    b.HasBaseType("Community.Domain.Models.User");
+                    b.HasBaseType("Community.Domain.Models.Abstract.User");
 
-                    b.HasDiscriminator().HasValue("Staff");
+                    b.HasDiscriminator().HasValue("Employee");
                 });
 
             modelBuilder.Entity("Community.Domain.Models.Permission", b =>
@@ -135,17 +135,17 @@ namespace Community.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("RoleStaff", b =>
+            modelBuilder.Entity("EmployeeRole", b =>
                 {
-                    b.HasOne("Community.Domain.Models.Role", null)
+                    b.HasOne("Community.Domain.Models.Employee", null)
                         .WithMany()
-                        .HasForeignKey("RolesId")
+                        .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Community.Domain.Models.Staff", null)
+                    b.HasOne("Community.Domain.Models.Role", null)
                         .WithMany()
-                        .HasForeignKey("StaffId")
+                        .HasForeignKey("RolesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

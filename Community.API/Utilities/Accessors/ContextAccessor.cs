@@ -1,5 +1,5 @@
 ﻿using Community.API.Utilities.Exceptions;
-using Community.Domain.Models;
+using Community.Domain.Models.Abstract;
 
 namespace Community.API.Utilities.Accessors
 {

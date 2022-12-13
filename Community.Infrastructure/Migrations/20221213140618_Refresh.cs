@@ -5,7 +5,7 @@
 namespace Community.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class OptimizeDatabase : Migration
+    public partial class Refresh : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -61,54 +61,54 @@ namespace Community.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RoleStaff",
+                name: "EmployeeRole",
                 columns: table => new
                 {
-                    RolesId = table.Column<int>(type: "int", nullable: false),
-                    StaffId = table.Column<int>(type: "int", nullable: false)
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    RolesId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RoleStaff", x => new { x.RolesId, x.StaffId });
+                    table.PrimaryKey("PK_EmployeeRole", x => new { x.EmployeeId, x.RolesId });
                     table.ForeignKey(
-                        name: "FK_RoleStaff_Roles_RolesId",
+                        name: "FK_EmployeeRole_Roles_RolesId",
                         column: x => x.RolesId,
                         principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RoleStaff_Users_StaffId",
-                        column: x => x.StaffId,
+                        name: "FK_EmployeeRole_Users_EmployeeId",
+                        column: x => x.EmployeeId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_EmployeeRole_RolesId",
+                table: "EmployeeRole",
+                column: "RolesId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Permissions_RoleId",
                 table: "Permissions",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RoleStaff_StaffId",
-                table: "RoleStaff",
-                column: "StaffId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "EmployeeRole");
+
+            migrationBuilder.DropTable(
                 name: "Permissions");
 
             migrationBuilder.DropTable(
-                name: "RoleStaff");
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Roles");
-
-            migrationBuilder.DropTable(
-                name: "Users");
         }
     }
 }

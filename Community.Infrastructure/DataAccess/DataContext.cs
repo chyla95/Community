@@ -1,4 +1,5 @@
 ﻿using Community.Domain.Models;
+using Community.Domain.Models.Abstract;
 using Microsoft.EntityFrameworkCore;
 
 namespace Community.Infrastructure.DataAccess
@@ -14,18 +15,18 @@ namespace Community.Infrastructure.DataAccess
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Staff>()
+            modelBuilder.Entity<Employee>()
                 .HasMany(p => p.Roles)
                 .WithMany();
         }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Customer> Customers { get; set; }
-        public DbSet<Staff> Staff { get; set; }
+        public DbSet<Employee> Employees { get; set; }
 
         public DbSet<Role> Roles { get; set; }
         public DbSet<Permission> Permissions { get; set; }
     }
 }
-// dotnet ef migrations add AddStaffAndRoles --project .\Community.Infrastructure\ -s .\Community.API\
+// dotnet ef migrations add MigrationName --project .\Community.Infrastructure\ -s .\Community.API\
 // dotnet ef database update --project .\Community.Infrastructure\ -s .\Community.API\

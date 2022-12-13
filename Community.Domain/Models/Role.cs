@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Community.Domain.Models.Abstract;
 
 namespace Community.Domain.Models
 {

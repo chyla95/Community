@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Community.Domain.Models
+namespace Community.Domain.Models.Abstract
 {
     public abstract class Entity
     {

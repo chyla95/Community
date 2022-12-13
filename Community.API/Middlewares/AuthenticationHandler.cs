@@ -4,8 +4,8 @@ using Community.API.Utilities.Exceptions;
 using Community.API.Utilities;
 using Microsoft.IdentityModel.Tokens;
 using Community.API.Utilities.Accessors;
-using Community.Domain.Models;
 using Community.Infrastructure.Services;
+using Community.Domain.Models.Abstract;
 
 namespace Community.API.Middlewares
 {

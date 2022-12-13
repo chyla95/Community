@@ -1,4 +1,4 @@
-﻿using Community.Domain.Models;
+﻿using Community.Domain.Models.Abstract;
 
 namespace Community.Infrastructure.Services
 {

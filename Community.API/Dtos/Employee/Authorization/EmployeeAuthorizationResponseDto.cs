@@ -1,9 +1,9 @@
-﻿using Community.API.Dtos.Staff.Role;
+﻿using Community.API.Dtos.Employee.Role;
 
-namespace Community.API.Dtos.Staff.Authorization
+namespace Community.API.Dtos.Employee.Authorization
 {
 #pragma warning disable CS8618
-    public class StaffAuthorizationResponseDto
+    public class EmployeeAuthorizationResponseDto
     {
         public int Id { get; set; }
         public string Email { get; set; }

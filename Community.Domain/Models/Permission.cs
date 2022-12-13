@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Community.Domain.Models.Abstract;
 
 namespace Community.Domain.Models
 {
@@ -7,7 +8,7 @@ namespace Community.Domain.Models
     {
         public enum ResourceType
         {
-            Staff,
+            Employee,
             Role,
             Customer
         }
