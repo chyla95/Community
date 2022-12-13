@@ -3,6 +3,6 @@
     public static class Configuration
     {
         public const string DB_CONNECTION_STRING_KEY = "ConnectionStrings:DatabaseConnection";
-        public const string JWT_SECRET_KEY = "AppSettings:JwtTokenSecret";
+        public const string JWT_SECRET_KEY = "AppSettings:JwtSecret";
     }
 }

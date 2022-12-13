@@ -10,7 +10,7 @@ namespace Community.Domain.Models
         {
             Employee,
             Role,
-            Customer
+            Customer,
         }
 
         public enum OperationType
