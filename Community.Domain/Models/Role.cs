@@ -8,8 +8,10 @@ namespace Community.Domain.Models
         [Required]
         [MinLength(3), MaxLength(30)]
         public string Name { get; set; }
+        [Required]
+        public bool IsAdministrator { get; set; }
 
-        public IEnumerable<Staff> Staff { get; set; }
+        public IEnumerable<Permission> Permissions { get; set; }
     }
 #pragma warning restore CS8618
 }
