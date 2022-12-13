@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Community.API.Dtos.Employee.Authorization;
+using Community.API.Dtos.Employee.Permission;
 using Community.API.Dtos.Employee.Role;
 using Community.API.Dtos.System;
 using Community.API.Utilities.Exceptions;
@@ -18,6 +19,8 @@ namespace Community.API
 
             CreateMap<RoleRequestDto, Role>();
             CreateMap<Role, RoleResponseDto>();
+
+            CreateMap<Permission, PermissionResponseDto>();
 
             // DTOs - system
             CreateMap<HttpException, HttpExceptionDto>();
