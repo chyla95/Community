@@ -56,7 +56,6 @@ namespace Community.API
 
             builder.Services.AddInfrastructureServices(dbConnectionString);
             builder.Services.AddAutoMapper(typeof(Program));
-            builder.Services.AddScoped<ProtectResource>();
 
             // Configure the HTTP request pipeline.
             WebApplication app = builder.Build();
