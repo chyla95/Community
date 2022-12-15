@@ -20,9 +20,9 @@ namespace Community.API
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
             // Get application settings
-            string? jwtSecretKey = builder.Configuration.GetSection(Configuration.JWT_SECRET_KEY).Value;
+            string? jwtSecretKey = builder.Configuration.GetSection(Constants.JWT_SECRET_KEY).Value;
             if (jwtSecretKey == null) throw new NullReferenceException(nameof(jwtSecretKey));
-            string? dbConnectionString = builder.Configuration.GetSection(Configuration.DB_CONNECTION_STRING_KEY).Value;
+            string? dbConnectionString = builder.Configuration.GetSection(Constants.DB_CONNECTION_STRING_KEY).Value;
             if (dbConnectionString == null) throw new NullReferenceException(nameof(dbConnectionString));
 
             // Add services to the container.

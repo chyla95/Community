@@ -34,7 +34,7 @@ namespace Community.API.Controllers
             await _userService.AddAsync(employee);
 
             EmployeeAuthorizationResponseDto response = _mapper.Map<EmployeeAuthorizationResponseDto>(employee);
-            string JwtTokenSecret = _appSettings.GetValue(Configuration.JWT_SECRET_KEY);
+            string JwtTokenSecret = _appSettings.GetValue(Constants.JWT_SECRET_KEY);
             response.JwtToken = employee.CreateJwtToken(JwtTokenSecret);
 
             return Ok(response);
@@ -48,7 +48,7 @@ namespace Community.API.Controllers
             if (!employee.ComparePassword(employeeSignInRequestDto.Password)) throw new HttpBadRequestException("Invalid credentials!");
 
             EmployeeAuthorizationResponseDto response = _mapper.Map<EmployeeAuthorizationResponseDto>(employee);
-            string JwtTokenSecret = _appSettings.GetValue(Configuration.JWT_SECRET_KEY);
+            string JwtTokenSecret = _appSettings.GetValue(Constants.JWT_SECRET_KEY);
             response.JwtToken = employee.CreateJwtToken(JwtTokenSecret);
 
             return Ok(response);
