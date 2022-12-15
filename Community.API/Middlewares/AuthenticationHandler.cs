@@ -1,11 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 using Community.API.Utilities.Exceptions;
-using Community.API.Utilities;
 using Microsoft.IdentityModel.Tokens;
-using Community.API.Utilities.Accessors;
 using Community.Infrastructure.Services;
 using Community.Domain.Models.Abstract;
+using Community.API.Utilities.Authenticator;
+using System.Security.Claims;
 
 namespace Community.API.Middlewares
 {
@@ -19,53 +18,62 @@ namespace Community.API.Middlewares
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext httpContext, IUserService<User> userService, ISettingsAccessor settingsAccessor)
+        public async Task InvokeAsync(HttpContext httpContext, IUserService<User> userService, IJwtAuthenticationConfiguration jwtAuthenticationConfiguration)
         {
-            string? authorizationHeader = httpContext.Request.Headers["Authorization"];
-            if (string.IsNullOrEmpty(authorizationHeader))
+            if (!IsAuthorizationHeaderIncluded(httpContext))
             {
                 await _next(httpContext);
                 return;
             }
-            if (!authorizationHeader.ToLower().StartsWith("bearer"))
-            {
-                throw new HttpUnauthorizedException("Invalid token!");
-            }
-
-            string token = authorizationHeader.Replace("Bearer", "", StringComparison.OrdinalIgnoreCase).Trim();
-            string secret = settingsAccessor.GetValue(Configuration.JWT_SECRET_KEY);
+            string tokenString = GetAuthorizationToken(httpContext);
 
             JwtSecurityTokenHandler tokenHandler = new();
-            TokenValidationParameters validationParameters = new()
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ValidateLifetime = true
-            };
-
             try
             {
-                _ = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+                _ = tokenHandler.ValidateToken(tokenString, jwtAuthenticationConfiguration.TokenValidationParameters, out SecurityToken validatedToken);
             }
             catch
             {
                 throw new HttpUnauthorizedException("Invalid token!");
             }
+            JwtSecurityToken token = tokenHandler.ReadJwtToken(tokenString);
 
-            JwtSecurityToken jwt = tokenHandler.ReadJwtToken(token);
+            Claim? userIdClaim = token.Claims.SingleOrDefault(claim => claim.Type == "userId");
+            if (userIdClaim == null) throw new HttpUnauthorizedException("Invalid token!");
 
-            string userId = jwt.Claims.First(claim => claim.Type == "userId").Value;
-            if (!string.IsNullOrEmpty(userId))
-            {
-                User? user = await userService.GetAsync(int.Parse(userId));
-                if (user == null) throw new NullReferenceException(nameof(user));
+            int userId = int.Parse(userIdClaim.Value);
+            User? user = await userService.GetAsync(userId);
+            if (user == null) throw new HttpUnauthorizedException("User not found!");
 
-                httpContext.Features.Set(user);
-            }
+            httpContext.Features.Set(user);
 
             await _next(httpContext);
+        }
+
+        private static bool IsAuthorizationHeaderIncluded(HttpContext httpContext)
+        {
+            string? authorizationHeader = httpContext.Request.Headers["Authorization"];
+            if(authorizationHeader.IsNullOrEmpty()) return false;
+            return true;
+        }
+
+        private static string GetAuthorizationHeader(HttpContext httpContext)
+        {
+            string? authorizationHeader = httpContext.Request.Headers["Authorization"];
+            if (authorizationHeader.IsNullOrEmpty()) throw new HttpUnauthorizedException();
+
+            return authorizationHeader!;
+        }
+
+        private static string GetAuthorizationToken(HttpContext httpContext)
+        {
+            string authorizationHeader = GetAuthorizationHeader(httpContext);
+            if (!authorizationHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)) throw new HttpUnauthorizedException("Invalid token!");
+
+            string normalizedToken = authorizationHeader
+                .Replace("Bearer", "", StringComparison.OrdinalIgnoreCase)
+                .Trim();
+            return normalizedToken!;
         }
     }
 

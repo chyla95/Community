@@ -1,9 +1,14 @@
 
+using System.Text;
+using Community.API.Extensions;
 using Community.API.Filters;
 using Community.API.Middlewares;
 using Community.API.Utilities;
 using Community.API.Utilities.Accessors;
+using Community.API.Utilities.Authenticator;
 using Community.Infrastructure;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace Community.API
@@ -21,6 +26,16 @@ namespace Community.API
             if (dbConnectionString == null) throw new NullReferenceException(nameof(dbConnectionString));
 
             // Add services to the container.
+            TokenValidationParameters tokenValidationParameters = new()
+            {
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey)),
+                ValidateIssuerSigningKey = true,
+                ValidateLifetime = true,
+                ValidateIssuer = false,
+                ValidateAudience = false,
+            };
+            JwtAuthenticationConfiguration authenticationConfiguration = new(tokenValidationParameters);
+            builder.Services.AddJwtAuthentication(authenticationConfiguration);
             builder.Services.AddSwaggerGen(configuration =>
             {
                 configuration.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
