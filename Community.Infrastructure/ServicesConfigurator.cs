@@ -11,6 +11,8 @@ namespace Community.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, string databaseConnectionString)
         {
+            if (services == null) throw new ArgumentNullException(nameof(services));
+
             // Database
             services.AddDbContext<DataContext>(options => options.UseSqlServer(databaseConnectionString));
 
