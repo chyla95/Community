@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
@@ -7,6 +8,7 @@ using BC = BCrypt.Net.BCrypt;
 namespace Community.Domain.Models.Abstract
 {
 #pragma warning disable CS8618
+    [Table(nameof(User) + "s")]
     public abstract class User : Entity
     {
         [Required]

@@ -1,11 +1,13 @@
-﻿using Community.Domain.Models.Abstract;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Community.Domain.Models.Abstract;
 
 namespace Community.Domain.Models
 {
 #pragma warning disable CS8618
-    public class Employee : User
+    [Table(nameof(Employee) + "s")]
+    public class Employee : Customer
     {
-        public IEnumerable<Role> Roles { get; set; }
+        public IEnumerable<Role>? Roles { get; set; }
 
         public enum Permission
         {
