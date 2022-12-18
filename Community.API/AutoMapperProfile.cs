@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Community.API.Dtos.Employee.Authorization;
+using Community.API.Dtos.Customer.Authentication;
 using Community.API.Dtos.Employee.Role;
 using Community.API.Dtos.System;
 using Community.API.Utilities.Exceptions;
@@ -12,9 +12,9 @@ namespace Community.API
         public AutoMapperProfile()
         {
             // DTOs - business
-            CreateMap<EmployeeSignInRequestDto, Employee>();
-            CreateMap<EmployeeSignUpRequestDto, Employee>();
-            CreateMap<Employee, EmployeeAuthorizationResponseDto>();
+            CreateMap<CustomerSignInRequestDto, Customer>();
+            CreateMap<CustomerSignUpRequestDto, Customer>();
+            CreateMap<Customer, CustomerAuthenticationResponseDto>();
 
             CreateMap<RoleRequestDto, Role>();
             CreateMap<Role, RoleResponseDto>();

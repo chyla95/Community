@@ -48,18 +48,18 @@ namespace Community.Domain.Models.Abstract
             bool doesPasswordMatch = BC.Verify(password, Password);
             return doesPasswordMatch;
         }
-        public string CreateJwtToken(string JwtTokenSecret)
+        public string CreateJwt(string JwtSecret)
         {
-            List<Claim> jwtTokenClaims = new()
+            List<Claim> jwtClaims = new()
             {
                 new Claim(ClaimTypes.NameIdentifier, Id.ToString()),
             };
 
-            SymmetricSecurityKey symmetricSecurityKey = new(System.Text.Encoding.UTF8.GetBytes(JwtTokenSecret));
+            SymmetricSecurityKey symmetricSecurityKey = new(System.Text.Encoding.UTF8.GetBytes(JwtSecret));
             SigningCredentials signingCredentials = new(symmetricSecurityKey, SecurityAlgorithms.HmacSha512Signature);
             SecurityTokenDescriptor securityTokenDescriptor = new()
             {
-                Subject = new ClaimsIdentity(jwtTokenClaims),
+                Subject = new ClaimsIdentity(jwtClaims),
                 Expires = DateTime.Now.AddDays(30),
                 SigningCredentials = signingCredentials
             };
@@ -67,8 +67,8 @@ namespace Community.Domain.Models.Abstract
             JwtSecurityTokenHandler jwtSecurityTokenHandler = new();
             SecurityToken securityToken = jwtSecurityTokenHandler.CreateToken(securityTokenDescriptor);
 
-            string JwtToken = jwtSecurityTokenHandler.WriteToken(securityToken);
-            return JwtToken;
+            string jwt = jwtSecurityTokenHandler.WriteToken(securityToken);
+            return jwt;
         }
     }
 #pragma warning restore CS8618
