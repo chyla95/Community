@@ -1,10 +1,6 @@
-﻿using System.Net.Mail;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Community.API.Dtos.System;
 using Community.API.Utilities.Exceptions;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 
 namespace Community.API.Middlewares
 {

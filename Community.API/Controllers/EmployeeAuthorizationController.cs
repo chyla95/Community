@@ -14,27 +14,27 @@ namespace Community.API.Controllers
     public class EmployeeAuthorizationController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly IUserService<Employee> _userService;
+        private readonly IEmployeeService _employeeService;
         private readonly ISettingsAccessor _appSettings;
 
-        public EmployeeAuthorizationController(IMapper mapper, IUserService<Employee> userService, ISettingsAccessor appSettings)
+        public EmployeeAuthorizationController(IMapper mapper, IEmployeeService employeeService, ISettingsAccessor appSettings)
         {
             _mapper = mapper;
-            _userService = userService;
+            _employeeService = employeeService;
             _appSettings = appSettings;
         }
 
         [HttpPost("SignUp")]
         public async Task<ActionResult<EmployeeAuthorizationResponseDto>> SignUp(EmployeeSignUpRequestDto employeeSignUpRequestDto)
         {
-            bool isEmailTaken = await _userService.IsEmailTaken(employeeSignUpRequestDto.Email);
+            bool isEmailTaken = await _employeeService.IsEmailTaken(employeeSignUpRequestDto.Email);
             if (isEmailTaken) throw new HttpBadRequestException("Email adress is taken!");
 
             Employee employee = _mapper.Map<Employee>(employeeSignUpRequestDto);
-            await _userService.AddAsync(employee);
+            await _employeeService.AddAsync(employee);
 
             EmployeeAuthorizationResponseDto response = _mapper.Map<EmployeeAuthorizationResponseDto>(employee);
-            string JwtTokenSecret = _appSettings.GetValue(Constants.JWT_SECRET_KEY);
+            string JwtTokenSecret = _appSettings.GetValue(Constants.AppSettingsKeys.JWT_SECRET);
             response.JwtToken = employee.CreateJwtToken(JwtTokenSecret);
 
             return Ok(response);
@@ -43,12 +43,12 @@ namespace Community.API.Controllers
         [HttpPost("SignIn")]
         public async Task<ActionResult<EmployeeAuthorizationResponseDto>> SignIn(EmployeeSignInRequestDto employeeSignInRequestDto)
         {
-            Employee? employee = await _userService.GetAsync(employeeSignInRequestDto.Email);
+            Employee? employee = await _employeeService.GetAsync(employeeSignInRequestDto.Email);
             if (employee == null) throw new HttpBadRequestException("Invalid credentials!");
             if (!employee.ComparePassword(employeeSignInRequestDto.Password)) throw new HttpBadRequestException("Invalid credentials!");
 
             EmployeeAuthorizationResponseDto response = _mapper.Map<EmployeeAuthorizationResponseDto>(employee);
-            string JwtTokenSecret = _appSettings.GetValue(Constants.JWT_SECRET_KEY);
+            string JwtTokenSecret = _appSettings.GetValue(Constants.AppSettingsKeys.JWT_SECRET);
             response.JwtToken = employee.CreateJwtToken(JwtTokenSecret);
 
             return Ok(response);

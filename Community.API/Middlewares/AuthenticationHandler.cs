@@ -1,8 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using Community.API.Utilities.Exceptions;
 using Microsoft.IdentityModel.Tokens;
-using Community.Infrastructure.Services;
-using Community.Domain.Models.Abstract;
 using Community.API.Utilities.Authenticator;
 using System.Security.Claims;
 
@@ -18,7 +16,7 @@ namespace Community.API.Middlewares
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext httpContext, IUserService<User> userService, IJwtAuthenticationConfiguration jwtAuthenticationConfiguration)
+        public async Task InvokeAsync(HttpContext httpContext, IJwtAuthenticationConfiguration jwtAuthenticationConfiguration)
         {
             if (!IsAuthorizationHeaderIncluded(httpContext))
             {
@@ -30,22 +28,13 @@ namespace Community.API.Middlewares
             JwtSecurityTokenHandler tokenHandler = new();
             try
             {
-                _ = tokenHandler.ValidateToken(tokenString, jwtAuthenticationConfiguration.TokenValidationParameters, out SecurityToken validatedToken);
+                ClaimsPrincipal claimsPrincipal = tokenHandler.ValidateToken(tokenString, jwtAuthenticationConfiguration.TokenValidationParameters, out SecurityToken validatedToken);
+                httpContext.User = claimsPrincipal;
             }
             catch
             {
                 throw new HttpUnauthorizedException("Invalid token!");
             }
-            JwtSecurityToken token = tokenHandler.ReadJwtToken(tokenString);
-
-            Claim? userIdClaim = token.Claims.SingleOrDefault(claim => claim.Type == "userId");
-            if (userIdClaim == null) throw new HttpUnauthorizedException("Invalid token!");
-
-            int userId = int.Parse(userIdClaim.Value);
-            User? user = await userService.GetAsync(userId);
-            if (user == null) throw new HttpUnauthorizedException("User not found!");
-
-            httpContext.Features.Set(user);
 
             await _next(httpContext);
         }

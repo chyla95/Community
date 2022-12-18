@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using BCrypt.Net;
 using Microsoft.IdentityModel.Tokens;
 using BC = BCrypt.Net.BCrypt;
 
@@ -19,7 +20,21 @@ namespace Community.Domain.Models.Abstract
         public string Password
         {
             get { return _password; }
-            set { _password = EncryptPassword(value); }
+            set
+            {
+                try
+                {
+                    // Guard - return if given password is already hashed.
+                    HashInformation hashInformation = BC.InterrogateHash(value);
+                    if (!hashInformation.RawHash.IsNullOrEmpty())
+                    {
+                        _password = value;
+                        return;
+                    }
+                }
+                catch { }
+                _password = EncryptPassword(value);
+            }
         }
         private string _password;
 
@@ -37,7 +52,7 @@ namespace Community.Domain.Models.Abstract
         {
             List<Claim> jwtTokenClaims = new()
             {
-                new Claim("userId", Id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, Id.ToString()),
             };
 
             SymmetricSecurityKey symmetricSecurityKey = new(System.Text.Encoding.UTF8.GetBytes(JwtTokenSecret));

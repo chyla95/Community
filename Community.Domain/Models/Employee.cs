@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Community.Domain.Models.Abstract;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Community.Domain.Models
 {
@@ -18,18 +18,20 @@ namespace Community.Domain.Models
 
         public bool IsAdministrator()
         {
-            bool isAdministrator = Roles.Any(r => r.IsAdministrator);
-            if (isAdministrator) return true;
-            return false;
+            if (Roles.IsNullOrEmpty()) return false;
+            bool isAdministrator = Roles!.Any(r => r.IsAdministrator);
+            if (!isAdministrator) return false;
+            return true;
         }
 
         public bool HasPermission(Permission permission)
         {
+            if (Roles.IsNullOrEmpty()) return false;
             bool hasPermission = permission switch
             {
-                Permission.ManageRoles => Roles.Any(r => r.CanManageRoles),
-                Permission.CanManageEmployees => Roles.Any(r => r.CanManageEmployees),
-                Permission.CanManageCustomers => Roles.Any(r => r.CanManageCustomers),
+                Permission.ManageRoles => Roles!.Any(r => r.CanManageRoles),
+                Permission.CanManageEmployees => Roles!.Any(r => r.CanManageEmployees),
+                Permission.CanManageCustomers => Roles!.Any(r => r.CanManageCustomers),
                 _ => throw new NotImplementedException("Missing mapping for this permission!"),
             };
             return hasPermission;

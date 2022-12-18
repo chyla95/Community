@@ -29,9 +29,7 @@ namespace Community.Infrastructure.Services
 
         protected override IQueryable<T> CreateQuery(DbSet<T> dbSet)
         {
-            IQueryable<T> query = base.CreateQuery(dbSet)
-            // Includes for Employee
-                .Include("Roles");
+            IQueryable<T> query = base.CreateQuery(dbSet);
 
             return query;
         }

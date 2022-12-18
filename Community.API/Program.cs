@@ -1,13 +1,10 @@
-
 using System.Text;
 using Community.API.Extensions;
-using Community.API.Filters;
 using Community.API.Middlewares;
 using Community.API.Utilities;
 using Community.API.Utilities.Accessors;
 using Community.API.Utilities.Authenticator;
 using Community.Infrastructure;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -20,9 +17,9 @@ namespace Community.API
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
             // Get application settings
-            string? jwtSecretKey = builder.Configuration.GetSection(Constants.JWT_SECRET_KEY).Value;
+            string? jwtSecretKey = builder.Configuration.GetSection(Constants.AppSettingsKeys.JWT_SECRET).Value;
             if (jwtSecretKey == null) throw new NullReferenceException(nameof(jwtSecretKey));
-            string? dbConnectionString = builder.Configuration.GetSection(Constants.DB_CONNECTION_STRING_KEY).Value;
+            string? dbConnectionString = builder.Configuration.GetSection(Constants.AppSettingsKeys.DB_CONNECTION_STRING).Value;
             if (dbConnectionString == null) throw new NullReferenceException(nameof(dbConnectionString));
 
             // Add services to the container.

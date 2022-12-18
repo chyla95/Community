@@ -2,7 +2,15 @@
 {
     public static class Constants
     {
-        public const string DB_CONNECTION_STRING_KEY = "ConnectionStrings:DatabaseConnection";
-        public const string JWT_SECRET_KEY = "AppSettings:JwtSecret";
+        public static class AppSettingsKeys
+        {
+            public const string DB_CONNECTION_STRING = "ConnectionStrings:DatabaseConnection";
+            public const string JWT_SECRET = "AppSettings:JwtSecret";
+        }
+
+        public static class HttpContextItemKeys
+        {
+            public const string USER = "User";
+        }
     }
 }

@@ -1,47 +1,70 @@
-﻿using System.Diagnostics;
-using System.Security;
+﻿using System.Security.Claims;
+using Community.API.Utilities;
 using Community.API.Utilities.Accessors;
 using Community.API.Utilities.Exceptions;
 using Community.Domain.Models;
+using Community.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.IdentityModel.Tokens;
 using static Community.Domain.Models.Employee;
 
 namespace Community.API.Filters
 {
-    public class AuthorizationFilter : IActionFilter
+    public class AuthorizationFilter : IAsyncActionFilter
     {
         private readonly IContextAccessor _contextAccessor;
+        private readonly IEmployeeService _employeeService;
 
         public IEnumerable<Permission>? Permissions { get; set; }
         public bool OnlyAdministrators { get; set; }
 
 
-        public AuthorizationFilter(IContextAccessor contextAccessor)
+        public AuthorizationFilter(IContextAccessor contextAccessor,IEmployeeService employeeService)
         {
             _contextAccessor = contextAccessor;
+            _employeeService = employeeService;
         }
 
-        public void OnActionExecuting(ActionExecutingContext context)
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            bool isUserAuthenticated = _contextAccessor.IsUserAuthenticated<Employee>();
-            if (!isUserAuthenticated) throw new HttpUnauthorizedException();
+            IEnumerable<Claim> claims = _contextAccessor.GetAuthorizationClaims();
+            if (!claims.Any()) throw new HttpUnauthorizedException();
 
-            Employee user = _contextAccessor.GetUser<Employee>();
+            Claim? userIdClaim = claims.SingleOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) throw new HttpUnauthorizedException("Invalid claims!");
 
-            if (OnlyAdministrators && !user.IsAdministrator()) throw new HttpForbiddenException();
-            if (!OnlyAdministrators && user.IsAdministrator()) return;
+            int userId = int.Parse(userIdClaim.Value);
+            Employee? employee = await _employeeService.GetAsync(userId);
+            if (employee == null) throw new HttpUnauthorizedException("Invalid user!");
 
-            if (Permissions.IsNullOrEmpty()) return;
-            foreach (Permission permission in Permissions!)
+            bool isAuthorized = false;
+            if (!isAuthorized)
             {
-                if (!user.HasPermission(permission)) throw new HttpForbiddenException();
+                if (OnlyAdministrators && employee.IsAdministrator()) isAuthorized = true;
+            }
+            if (!isAuthorized)
+            {
+                if (!OnlyAdministrators && employee.IsAdministrator()) isAuthorized = true;
+            }
+            if (!isAuthorized)
+            {
+                if (Permissions.IsNullOrEmpty()) isAuthorized = true;
+            }
+            if (!isAuthorized)
+            {
+                bool hasAllPermissions = true;
+                foreach (Permission permission in Permissions!)
+                {
+                    if (!employee.HasPermission(permission)) hasAllPermissions = false;
+                }
+                if (hasAllPermissions) isAuthorized = true;
             }
 
-            return;
-        }
+            if(!isAuthorized) throw new HttpForbiddenException();
+            _contextAccessor.SetUser(employee);
 
-        public void OnActionExecuted(ActionExecutedContext context) { }
+            await next();
+        }
     }
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
@@ -66,7 +89,10 @@ namespace Community.API.Filters
             IContextAccessor? contextAccessor = serviceProvider.GetService<IContextAccessor>();
             if (contextAccessor == null) throw new NullReferenceException(nameof(contextAccessor));
 
-            AuthorizationFilter authorizationFilter = new(contextAccessor)
+            IEmployeeService? employeeService = serviceProvider.GetService<IEmployeeService>();
+            if (employeeService == null) throw new NullReferenceException(nameof(employeeService));
+
+            AuthorizationFilter authorizationFilter = new(contextAccessor, employeeService)
             {
                 Permissions = Permissions,
                 OnlyAdministrators = OnlyAdministrators

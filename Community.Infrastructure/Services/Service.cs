@@ -15,16 +15,18 @@ namespace Community.Infrastructure.Services
             _dbSet = dataContext.Set<T>();
         }
 
-        public virtual async Task<IEnumerable<T>> GetManyAsync()
+        public virtual async Task<IEnumerable<T>> GetManyAsync(bool isTrackingEnabled = true)
         {
             IQueryable<T> query = CreateQuery(_dbSet);
+            if(!isTrackingEnabled) query = query.AsNoTracking();
 
             IEnumerable<T> users = await query.ToListAsync();
             return users;
         }
-        public virtual async Task<T?> GetAsync(int id)
+        public virtual async Task<T?> GetAsync(int id, bool isTrackingEnabled = true)
         {
             IQueryable<T> query = CreateQuery(_dbSet);
+            if (!isTrackingEnabled) query = query.AsNoTracking();
 
             T? user = await query.SingleOrDefaultAsync(e => e.Id == id);
             return user;

@@ -1,6 +1,4 @@
-﻿using Community.Domain.Models;
-using Community.Domain.Models.Abstract;
-using Community.Infrastructure.DataAccess;
+﻿using Community.Infrastructure.DataAccess;
 using Community.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,9 +15,8 @@ namespace Community.Infrastructure
             services.AddDbContext<DataContext>(options => options.UseSqlServer(databaseConnectionString));
 
             // Services
-            services.AddScoped<IUserService<User>, UserService<User>>();
-            services.AddScoped<IUserService<Employee>, UserService<Employee>>();
-            services.AddScoped<IUserService<Customer>, UserService<Customer>>();
+            services.AddTransient<ICustomerService, CustomerService>();
+            services.AddTransient<IEmployeeService, EmployeeService>();
 
             return services;
         }
