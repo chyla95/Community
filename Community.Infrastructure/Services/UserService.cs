@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Community.Infrastructure.Services
 {
-    internal class UserService<T> : Service<T>, IUserService<T> where T : User
+    internal abstract class UserService<T> : Service<T>, IUserService<T> where T : User
     {
         public UserService(DataContext dataContext) : base(dataContext) { }
 
