@@ -10,7 +10,7 @@ using static Community.Domain.Models.Employee;
 
 namespace Community.API.Filters
 {
-    public class AuthorizationFilter : IAsyncActionFilter
+    public class EmployeeAuthorizationFilter : IAsyncActionFilter
     {
         private readonly IContextAccessor _contextAccessor;
         private readonly IEmployeeService _employeeService;
@@ -19,7 +19,7 @@ namespace Community.API.Filters
         public bool OnlyAdministrators { get; set; }
 
 
-        public AuthorizationFilter(IContextAccessor contextAccessor,IEmployeeService employeeService)
+        public EmployeeAuthorizationFilter(IContextAccessor contextAccessor,IEmployeeService employeeService)
         {
             _contextAccessor = contextAccessor;
             _employeeService = employeeService;
@@ -68,18 +68,18 @@ namespace Community.API.Filters
     }
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
-    public class AuthorizationAttribute : Attribute, IFilterFactory
+    public class EmployeeAuthorizationAttribute : Attribute, IFilterFactory
     {
         public bool IsReusable { get; set; }
         public IEnumerable<Permission>? Permissions { get; private set; }
         public bool OnlyAdministrators { get; set; }
 
-        public AuthorizationAttribute() { }
-        public AuthorizationAttribute(Permission permission)
+        public EmployeeAuthorizationAttribute() { }
+        public EmployeeAuthorizationAttribute(Permission permission)
         {
             Permissions = new HashSet<Permission> { permission };
         }
-        public AuthorizationAttribute(Permission[] permissions)
+        public EmployeeAuthorizationAttribute(Permission[] permissions)
         {
             Permissions = new HashSet<Permission>(permissions);
         }
@@ -92,7 +92,7 @@ namespace Community.API.Filters
             IEmployeeService? employeeService = serviceProvider.GetService<IEmployeeService>();
             if (employeeService == null) throw new NullReferenceException(nameof(employeeService));
 
-            AuthorizationFilter authorizationFilter = new(contextAccessor, employeeService)
+            EmployeeAuthorizationFilter authorizationFilter = new(contextAccessor, employeeService)
             {
                 Permissions = Permissions,
                 OnlyAdministrators = OnlyAdministrators
