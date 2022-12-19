@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using Community.API.Dtos.System;
-using Community.API.Utilities.Exceptions;
+﻿using Community.API.Utilities.Exceptions;
 
 namespace Community.API.Middlewares
 {
@@ -9,13 +7,11 @@ namespace Community.API.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionHandler> _logger;
-        private readonly IMapper _mapper;
 
-        public ExceptionHandler(RequestDelegate next, ILogger<ExceptionHandler> logger, IMapper mapper)
+        public ExceptionHandler(RequestDelegate next, ILogger<ExceptionHandler> logger)
         {
             _next = next;
             _logger = logger;
-            _mapper = mapper;
         }
 
         public async Task InvokeAsync(HttpContext httpContext)
@@ -36,21 +32,23 @@ namespace Community.API.Middlewares
 
         private async Task HandleExceptionAsync(HttpContext httpContext, HttpException exception)
         {
-            HttpExceptionDto httpExceptionDto = _mapper.Map<HttpExceptionDto>(exception);
-
             httpContext.Response.StatusCode = (int)exception.StatusCode;
-            await httpContext.Response.WriteAsJsonAsync(httpExceptionDto);
+            httpContext.Response.ContentType = "application/json";
+
+            await httpContext.Response.WriteAsync(exception.SerializeToJson());
         }
 
         private async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
         {
+            _logger.LogError(exception.Message);
             _logger.LogError(exception.ToString());
 
-            HttpInternalServerErrorException internalServerErrorException = new(exception.Message);
-            HttpExceptionDto httpExceptionDto = _mapper.Map<HttpExceptionDto>(internalServerErrorException);
+            HttpInternalServerErrorException internalServerErrorException = new();
 
             httpContext.Response.StatusCode = (int)internalServerErrorException.StatusCode;
-            await httpContext.Response.WriteAsJsonAsync(httpExceptionDto);
+            httpContext.Response.ContentType = "application/json";
+
+            await httpContext.Response.WriteAsync(internalServerErrorException.SerializeToJson());
         }
     }
 
