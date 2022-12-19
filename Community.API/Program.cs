@@ -1,10 +1,12 @@
 using System.Text;
 using Community.API.Extensions;
+using Community.API.Filters;
 using Community.API.Middlewares;
 using Community.API.Utilities;
 using Community.API.Utilities.Accessors;
 using Community.API.Utilities.Authenticator;
 using Community.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -68,6 +70,12 @@ namespace Community.API
 
             builder.Services.AddInfrastructureServices(dbConnectionString);
             builder.Services.AddAutoMapper(typeof(Program));
+
+            builder.Services.AddScoped<ModelStateValidationFilter>();
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
 
             // Configure the HTTP request pipeline.
             WebApplication app = builder.Build();
