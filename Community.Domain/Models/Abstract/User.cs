@@ -13,10 +13,10 @@ namespace Community.Domain.Models.Abstract
     public abstract class User : Entity
     {
         [Required]
-        [MinLength(5), MaxLength(100)]
+        [EmailAddress]
         public string Email { get; set; }
         [Required]
-        [MinLength(5), MaxLength(100)]
+        [MinLength(5), MaxLength(50)]
         public string Password
         {
             get { return _password; }
