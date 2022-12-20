@@ -15,7 +15,7 @@ namespace Community.Infrastructure.Services
             T? user = await query.SingleOrDefaultAsync(e => e.Email == email);
             return user;
         }
-        public async Task<bool> IsEmailTaken(string email, int? userId = null)
+        public async Task<bool> IsEmailTakenAsync(string email, int? userId = null)
         {
             IQueryable<T> query = CreateQuery(_dbSet);
 

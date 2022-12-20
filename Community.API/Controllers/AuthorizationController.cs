@@ -27,7 +27,7 @@ namespace Community.API.Controllers
         [HttpPost("SignUp")]
         public async Task<ActionResult<CustomerAuthenticationResponseDto>> SignUp(CustomerSignUpRequestDto customerSignUpRequestDto)
         {
-            bool isEmailTaken = await _customerService.IsEmailTaken(customerSignUpRequestDto.Email);
+            bool isEmailTaken = await _customerService.IsEmailTakenAsync(customerSignUpRequestDto.Email);
             if (isEmailTaken) throw new HttpBadRequestException("Email adress is taken!");
 
             Customer customer = _mapper.Map<Customer>(customerSignUpRequestDto);
