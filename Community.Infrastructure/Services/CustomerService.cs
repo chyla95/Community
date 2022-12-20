@@ -8,7 +8,7 @@ namespace Community.Infrastructure.Services
     {
         public CustomerService(DataContext dataContext) : base(dataContext) { }
 
-        public async Task ConvertToEmployee(Customer entityBefore, Employee entityAfter)
+        public async Task ConvertToEmployeeAsync(Customer entityBefore, Employee entityAfter)
         {
             if (entityBefore is Employee) throw new NotSupportedException($"Invalid entity type!");
 
