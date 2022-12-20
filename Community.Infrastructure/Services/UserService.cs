@@ -8,7 +8,7 @@ namespace Community.Infrastructure.Services
     {
         public UserService(DataContext dataContext) : base(dataContext) { }
 
-        public async Task<T?> GetAsync(string email)
+        public async Task<T?> GetByEmailAsync(string email)
         {
             IQueryable<T> query = CreateQuery(_dbSet);
 

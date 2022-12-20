@@ -43,7 +43,7 @@ namespace Community.API.Controllers
         [HttpPost("SignIn")]
         public async Task<ActionResult<CustomerAuthenticationResponseDto>> SignIn(CustomerSignInRequestDto customerSignInRequestDto)
         {
-            Customer? customer = await _customerService.GetAsync(customerSignInRequestDto.Email);
+            Customer? customer = await _customerService.GetByEmailAsync(customerSignInRequestDto.Email);
             if (customer == null) throw new HttpBadRequestException("Invalid credentials!");
             if (!customer.ComparePassword(customerSignInRequestDto.Password)) throw new HttpBadRequestException("Invalid credentials!");
 
