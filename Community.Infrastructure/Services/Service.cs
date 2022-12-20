@@ -15,7 +15,7 @@ namespace Community.Infrastructure.Services
             _dbSet = dataContext.Set<T>();
         }
 
-        public virtual async Task<IEnumerable<T>> GetManyAsync(bool isTrackingEnabled = true)
+        public virtual async Task<IEnumerable<T>> GetManyAsync(bool isTrackingEnabled = false)
         {
             IQueryable<T> query = CreateQuery(_dbSet);
             if(!isTrackingEnabled) query = query.AsNoTracking();
@@ -23,7 +23,7 @@ namespace Community.Infrastructure.Services
             IEnumerable<T> users = await query.ToListAsync();
             return users;
         }
-        public virtual async Task<T?> GetAsync(int id, bool isTrackingEnabled = true)
+        public virtual async Task<T?> GetAsync(int id, bool isTrackingEnabled = false)
         {
             IQueryable<T> query = CreateQuery(_dbSet);
             if (!isTrackingEnabled) query = query.AsNoTracking();
