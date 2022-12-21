@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Community.API.Dtos.Customer.Authentication
+namespace Community.API.Dtos.Authentication
 {
 #pragma warning disable CS8618
     public class CustomerSignUpRequestDto

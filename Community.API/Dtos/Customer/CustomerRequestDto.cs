@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Community.API.Dtos.Customer.Authentication
+namespace Community.API.Dtos.Customer
 {
 #pragma warning disable CS8618
-    public class CustomerSignInRequestDto
+    public class CustomerRequestDto
     {
         [Required]
         [EmailAddress]
