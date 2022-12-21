@@ -61,7 +61,14 @@ namespace Community.API
                 });
             });
 
-            builder.Services.AddControllers();
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+            builder.Services.AddControllers(configuration =>
+            {
+                configuration.Filters.Add(new ModelStateValidationFilter());
+            });
             builder.Services.AddEndpointsApiExplorer();
 
             builder.Services.AddHttpContextAccessor();
@@ -70,12 +77,6 @@ namespace Community.API
 
             builder.Services.AddInfrastructureServices(dbConnectionString);
             builder.Services.AddAutoMapper(typeof(Program));
-
-            builder.Services.AddScoped<ModelStateValidationFilter>();
-            builder.Services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.SuppressModelStateInvalidFilter = true;
-            });
 
             // Configure the HTTP request pipeline.
             WebApplication app = builder.Build();
