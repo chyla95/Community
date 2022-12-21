@@ -17,6 +17,7 @@ namespace Community.Infrastructure
             // Services
             services.AddTransient<ICustomerService, CustomerService>();
             services.AddTransient<IEmployeeService, EmployeeService>();
+            services.AddTransient<IRoleService, RoleService>();
 
             return services;
         }
