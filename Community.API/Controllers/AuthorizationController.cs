@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Community.API.Dtos.Customer.Authentication;
+using Community.API.Dtos.Authentication;
 using Community.API.Utilities;
 using Community.API.Utilities.Accessors;
 using Community.API.Utilities.Exceptions;
@@ -53,6 +53,5 @@ namespace Community.API.Controllers
 
             return Ok(response);
         }
-
     }
 }
