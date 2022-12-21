@@ -12,8 +12,8 @@ namespace Community.Domain.Models
         public enum Permission
         {
             ManageRoles,
-            CanManageEmployees,
-            CanManageCustomers,
+            ManageEmployees,
+            ManageCustomers,
         }
 
         public bool IsAdministrator()
@@ -30,8 +30,8 @@ namespace Community.Domain.Models
             bool hasPermission = permission switch
             {
                 Permission.ManageRoles => Roles!.Any(r => r.CanManageRoles),
-                Permission.CanManageEmployees => Roles!.Any(r => r.CanManageEmployees),
-                Permission.CanManageCustomers => Roles!.Any(r => r.CanManageCustomers),
+                Permission.ManageEmployees => Roles!.Any(r => r.CanManageEmployees),
+                Permission.ManageCustomers => Roles!.Any(r => r.CanManageCustomers),
                 _ => throw new NotImplementedException("Missing mapping for this permission!"),
             };
             return hasPermission;

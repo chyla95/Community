@@ -43,7 +43,7 @@ namespace Community.API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        [EmployeeAuthorization(Permission.CanManageCustomers)]
+        [EmployeeAuthorization(Permission.ManageCustomers)]
         public async Task<ActionResult> Update(int id, CustomerRequestDto customerRequestDto)
         {
             Customer? customer = await _customerService.GetAsync(id);
@@ -59,7 +59,7 @@ namespace Community.API.Controllers
         }
 
         [HttpPost("ToEmployee/{id:int}")]
-        [EmployeeAuthorization(Permission.CanManageEmployees)]
+        [EmployeeAuthorization(Permission.ManageEmployees)]
         public async Task<ActionResult> ToEmployee(int id)
         {
             Customer? customer = await _customerService.GetAsync(id);

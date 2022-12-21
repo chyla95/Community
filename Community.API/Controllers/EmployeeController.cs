@@ -42,7 +42,7 @@ namespace Community.API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        [EmployeeAuthorization(Permission.CanManageEmployees)]
+        [EmployeeAuthorization(Permission.ManageEmployees)]
         public async Task<ActionResult> Update(int id, EmployeeRequestDto employeeRequestDto)
         {
             Employee? employee = await _employeeService.GetAsync(id);
